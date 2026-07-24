@@ -1,0 +1,40 @@
+<<<<<<< Updated upstream
+=======
+{
+  "manifest_version": 3,
+  "name": "Specz", 
+  "version": "1.0",
+  "description": "AI-powered price comparison and spec analysis",
+  "permissions": ["storage", "activeTab", "scripting", "tabs"],
+  "host_permissions": [
+    "http://localhost:3000/*",
+    "https://generativelanguage.googleapis.com/*",
+    "https://api.groq.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup/popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.daraz.com/*",
+        "*://*.daraz.com.np/*",
+        "*://itti.com.np/*",
+        "*://*.hukut.com/*",
+        "*://oliz.com.np/*"
+      ],
+      "js": ["content.js"]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["data/mockData.json"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}
+
+>>>>>>> Stashed changes

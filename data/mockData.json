@@ -1,0 +1,86 @@
+[
+  {
+    "source": "ITTI",
+    "store": "ITTI",
+    "title": "Dell Inspiron 15 3520 i5 12th Gen 8GB RAM 512GB SSD",
+    "price": 83000,
+    "url": "https://itti.com.np"
+  },
+  {
+    "source": "Hukut",
+    "store": "Hukut",
+    "title": "Dell Inspiron 15 3520 i5 12th Gen 8GB 512GB",
+    "price": 82000,
+    "url": "https://hukut.com"
+  },
+  {
+    "source": "Oliz Store",
+    "store": "Oliz",
+    "title": "Dell Inspiron 15 3520 Core i5 12th Gen",
+    "price": 84000,
+    "url": "https://oliz.com.np"
+  },
+  {
+    "source": "ITTI",
+    "store": "ITTI",
+    "title": "Apple MacBook Air M2 Chip 8GB 256GB SSD",
+    "price": 142000,
+    "url": "https://itti.com.np"
+  },
+  {
+    "source": "Hukut Store",
+    "store": "Hukut",
+    "title": "Lenovo IdeaPad Slim 3 Core i5 13th Gen 16GB RAM",
+    "price": 78000,
+    "url": "https://hukut.com"
+  },
+  {
+    "source": "ITTI",
+    "store": "ITTI",
+    "title": "Asus ROG Strix G16 G615JMR i7 14th Gen RTX 4060 16GB 1TB",
+    "price": 285000,
+    "url": "https://itti.com.np"
+  },
+  {
+    "source": "Hukut Store",
+    "store": "Hukut",
+    "title": "Asus ROG Strix G16 G615JMR Core i7 14th Gen 16GB 1TB SSD RTX 4060",
+    "price": 279000,
+    "url": "https://hukut.com"
+  },
+  {
+    "source": "ITTI",
+    "store": "ITTI",
+    "title": "ASUS VivoBook 16 M1607KA Ryzen AI 5 330 16GB RAM 512GB SSD",
+    "price": 114000,
+    "url": "https://itti.com.np"
+  },
+  {
+    "source": "Hukut Store",
+    "store": "Hukut",
+    "title": "ASUS VivoBook 16 M1607 Ryzen AI 5 16GB 512GB SSD 16 FHD+",
+    "price": 112500,
+    "url": "https://hukut.com"
+  },
+  {
+    "source": "Oliz Store",
+    "store": "Oliz",
+    "title": "ASUS VivoBook 16 M1607 Ryzen 5 16GB DDR5 512GB SSD",
+    "price": 115000,
+    "url": "https://oliz.com.np"
+  },
+  {
+    "source": "ITTI",
+    "store": "ITTI",
+    "title": "Asus TUF Gaming A15 Ryzen 7 7735HS RTX 4060 16GB 512GB",
+    "price": 138000,
+    "url": "https://itti.com.np"
+  },
+  {
+    "source": "Hukut Store",
+    "store": "Hukut",
+    "title": "HP Victus 15 Core i5 13th Gen RTX 3050 16GB 512GB",
+    "price": 98000,
+    "url": "https://hukut.com"
+  }
+]
