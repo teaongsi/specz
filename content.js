@@ -80,6 +80,11 @@ function extractProduct() {
       document.querySelector(".price-box .price")?.innerText ||
       document.querySelector(".price")?.innerText ||
       "";
+  }else if (host.includes("evostore")){
+        priceText =
+      document.querySelector(".price-box .price")?.innerText ||
+      document.querySelector(".price")?.innerText ||
+      "";
   }
 
   if (!priceText) {

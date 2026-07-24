@@ -21,7 +21,8 @@
         "*://*.daraz.com.np/*",
         "*://itti.com.np/*",
         "*://*.hukut.com/*",
-        "*://oliz.com.np/*"
+        "*://oliz.com.np/*",
+        "*://evostore.com.np/*"
       ],
       "js": ["content.js"]
     }

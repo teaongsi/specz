@@ -35,19 +35,32 @@ function renderCompare() {
 
   const { product, cheapest, savings, matches } = currentData;
 
-  const matchRows = matches && matches.length
-    ? matches
-        .map(
-          m => `
-      <div class="match-row">
+  // const matchRows = matches && matches.length
+  //   ? matches
+  //       .map(
+  //         m => `
+  //     <div class="match-row">
+  //       <span>${escapeHtml(m.title)}</span>
+  //       <span>Rs ${Number(m.price || 0).toLocaleString()}</span>
+  //     </div>
+  //     <div class="match-source">${escapeHtml(m.source || m.store || "")}</div>`
+  //       )
+  //       .join("")
+  //   : "<p>No matching listings found.</p>";
+const matchRows = matches && matches.length
+  ? matches
+      .map(
+        m => `
+    <div class="match-row">
+      <a href="${escapeHtml(m.url || "#")}" target="_blank" rel="noopener noreferrer">
         <span>${escapeHtml(m.title)}</span>
-        <span>Rs ${Number(m.price || 0).toLocaleString()}</span>
-      </div>
-      <div class="match-source">${escapeHtml(m.source || m.store || "")}</div>`
-        )
-        .join("")
-    : "<p>No matching listings found.</p>";
-
+      </a>
+      <span>Rs ${Number(m.price || 0).toLocaleString()}</span>
+    </div>
+    <div class="match-source">${escapeHtml(m.source || m.store || "")}</div>`
+      )
+      .join("")
+  : "<p>No matching listings found.</p>";
   const cheapObj = cheapest || product;
   const isCurrentCheapest = Number(cheapObj.price) === Number(product.price);
 
