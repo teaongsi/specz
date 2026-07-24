@@ -35,30 +35,33 @@ function renderCompare() {
 
   const { product, cheapest, savings, matches } = currentData;
 
-  const matchRows = matches.length
+  const matchRows = matches && matches.length
     ? matches
         .map(
           m => `
       <div class="match-row">
         <span>${escapeHtml(m.title)}</span>
-        <span>Rs ${Number(m.price).toLocaleString()}</span>
+        <span>Rs ${Number(m.price || 0).toLocaleString()}</span>
       </div>
       <div class="match-source">${escapeHtml(m.source || m.store || "")}</div>`
         )
         .join("")
     : "<p>No matching listings found.</p>";
 
+  const cheapObj = cheapest || product;
+  const isCurrentCheapest = Number(cheapObj.price) === Number(product.price);
+
   document.getElementById("compare").innerHTML = `
     <p><b>${escapeHtml(product.title)}</b></p>
-    <p>Rs ${Number(product.price).toLocaleString()}</p>
+    <p>Rs ${Number(product.price || 0).toLocaleString()}</p>
     <hr/>
     <p class="text-green">
-      Cheapest: Rs ${Number(cheapest.price).toLocaleString()}
-      ${cheapest.source || cheapest.store ? ` (${escapeHtml(cheapest.source || cheapest.store)})` : ""}
+      Cheapest: Rs ${Number(cheapObj.price || 0).toLocaleString()}
+      ${cheapObj.source || cheapObj.store ? ` (${escapeHtml(cheapObj.source || cheapObj.store)})` : ""}
     </p>
-    <p>Save ${savings}%</p>
+    <p>${isCurrentCheapest ? "Best Price Available!" : `Save ${savings}%`}</p>
     <hr/>
-    <p><b>Matches (${matches.length})</b></p>
+    <p><b>Matches (${matches ? matches.length : 0})</b></p>
     ${matchRows}
     <button id="saveBtn">Save to wishlist</button>
   `;
@@ -112,24 +115,67 @@ function escapeHtml(text) {
     .replace(/"/g, "&quot;");
 }
 
+// async function extractFromActiveTab() {
+//   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+//   if (!tab?.id) throw new Error("No active tab found.");
+
+//   const extract = () =>
+//     chrome.tabs.sendMessage(tab.id, { type: "EXTRACT_PRODUCT" });
+
+//   try {
+//     return await extract();
+//   } catch {
+//     try {
+//       await chrome.scripting.executeScript({
+//         target: { tabId: tab.id },
+//         files: ["content.js"]
+//       });
+//       return await extract();
+//     } catch {
+//       throw new Error("Could not read this page. Open a product page on a supported store and try again.");
+//     }
+//   }
+// }
 async function extractFromActiveTab() {
-  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  if (!tab?.id) throw new Error("No active tab found.");
+  const [tab] = await chrome.tabs.query({
+    active: true,
+    currentWindow: true
+  });
+
+  if (!tab?.id) {
+    throw new Error("No active tab found.");
+  }
 
   const extract = () =>
-    chrome.tabs.sendMessage(tab.id, { type: "EXTRACT_PRODUCT" });
+    chrome.tabs.sendMessage(tab.id, {
+      type: "EXTRACT_PRODUCT"
+    });
 
   try {
-    return await extract();
+    const product = await extract();
+
+    console.log("EXTRACTED PRODUCT FROM CONTENT:", product);
+
+    return product;
   } catch {
     try {
       await chrome.scripting.executeScript({
         target: { tabId: tab.id },
         files: ["content.js"]
       });
-      return await extract();
+
+      const product = await extract();
+
+      console.log(
+        "EXTRACTED PRODUCT AFTER INJECTION:",
+        product
+      );
+
+      return product;
     } catch {
-      throw new Error("Could not read this page. Open a product page on a supported store and try again.");
+      throw new Error(
+        "Could not read this page. Open a product page on a supported store and try again."
+      );
     }
   }
 }
@@ -141,7 +187,7 @@ async function analyzeProduct() {
 
   try {
     const product = await extractFromActiveTab();
-
+console.log("PRODUCT BEFORE BACKEND:", product);
     if (!product?.title) {
       throw new Error("No product title found on this page.");
     }
@@ -172,4 +218,4 @@ document.querySelectorAll("nav button").forEach(btn => {
 
 document.getElementById("analyzeBtn").addEventListener("click", analyzeProduct);
 
-document.addEventListener("DOMContentLoaded", analyzeProduct);
+// document.addEventListener("DOMContentLoaded", analyzeProduct);

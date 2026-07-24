@@ -1,78 +1,143 @@
 const express = require("express");
-const axios = require("axios");
-const cheerio = require("cheerio");
 const cors = require("cors");
 
+const {
+  scrapeIttiProduct,
+  searchIttiProducts
+} = require("./scrappers/itti");
+
+const {
+  scrapeHukutProduct,
+  searchHukutProducts
+} = require("./scrappers/hukut");
+
+function extractSearchQuery(title) {
+  if (!title) return "laptop";
+  let clean = title
+    .replace(/\(.*?\)/g, "")
+    .replace(/\[.*?\]/g, "")
+    .replace(/\|.*/g, "");
+  clean = clean.replace(
+    /\b(ram|ssd|hdd|fhd|wuxga|oled|display|laptop|intel|core|ryzen|amd|gen|gb|tb|14"|15\.6"|16")\b/gi,
+    ""
+  );
+  const words = clean
+    .trim()
+    .split(/\s+/)
+    .filter(w => w.length > 1);
+  return words.slice(0, 3).join(" ") || title.split(" ").slice(0, 3).join(" ");
+}
+
 const app = express();
+
 app.use(cors());
+app.use(express.json());
 
-//////////////////////////////////////////////////////
-// 🛒 DARAZ SCRAPER
-//////////////////////////////////////////////////////
+// app.post("/api/compare", async (req, res) => {
+//   try {
+//     console.log("BODY RECEIVED:", req.body);
 
-app.get("/api/daraz", async (req, res) => {
+//     const {
+//       currentProduct,
+//       ittiUrl,
+//       hukutUrl
+//     } = req.body;
+
+//     const products = [];
+
+//     if (ittiUrl) {
+//       const ittiProduct = await scrapeIttiProduct(ittiUrl);
+//       if (ittiProduct) products.push(ittiProduct);
+//     }
+
+//     if (hukutUrl) {
+//       const hukutProduct = await scrapeHukutProduct(hukutUrl);
+//       if (hukutProduct) products.push(hukutProduct);
+//     }
+
+//     if (!ittiUrl && !hukutUrl && currentProduct?.title) {
+//       const query = extractSearchQuery(currentProduct.title);
+//       console.log("DYNAMIC SEARCH QUERY:", query);
+
+//       const [ittiResults, hukutResults] = await Promise.all([
+//         searchIttiProducts(query).catch(err => {
+//           console.error("ITTI Search err:", err.message);
+//           return [];
+//         }),
+//         searchHukutProducts(query).catch(err => {
+//           console.error("Hukut Search err:", err.message);
+//           return [];
+//         })
+//       ]);
+
+//       if (ittiResults.length) products.push(...ittiResults);
+//       if (hukutResults.length) products.push(...hukutResults);
+//     }
+
+//     console.log("SCRAPED & MATCHED PRODUCTS:", products);
+
+//     res.json({
+//       products
+//     });
+
+//   } catch (error) {
+//     console.error("BACKEND ERROR:", error);
+
+//     res.status(500).json({
+//       error: error.message
+//     });
+//   }
+// });
+app.post("/api/compare", async (req, res) => {
   try {
-    const url = "https://www.daraz.com.np/catalog/?q=laptop";
+    console.log("BODY RECEIVED:", req.body);
 
-    const { data } = await axios.get(url, {
-      headers: {
-        "User-Agent": "Mozilla/5.0"
-      }
-    });
-
-    const $ = cheerio.load(data);
+    const { currentProduct, ittiUrl, hukutUrl } = req.body;
 
     const products = [];
 
-    $(".Bm3ON").each((i, el) => {
-      const text = $(el).text();
+    // Scrape the exact current page if URLs are given (for accurate current price/title)
+    if (ittiUrl) {
+      const ittiProduct = await scrapeIttiProduct(ittiUrl);
+      if (ittiProduct) products.push(ittiProduct);
+    }
 
-      const priceMatch = text.match(/[\d,]+/);
+    if (hukutUrl) {
+      const hukutProduct = await scrapeHukutProduct(hukutUrl);
+      if (hukutProduct) products.push(hukutProduct);
+    }
 
-      products.push({
-        title: text.trim(),
-        price: priceMatch
-          ? parseInt(priceMatch[0].replace(/,/g, ""))
-          : 0,
-        source: "Daraz"
-      });
-    });
+    // ALWAYS also search other sites for matches, using the title we have
+    if (currentProduct?.title) {
+      const query = extractSearchQuery(currentProduct.title);
+      console.log("DYNAMIC SEARCH QUERY:", query);
 
-    res.json(products.slice(0, 15));
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Scraping failed" });
+      const searches = [];
+      if (!ittiUrl) searches.push(
+        searchIttiProducts(query).catch(err => {
+          console.error("ITTI Search err:", err.message);
+          return [];
+        })
+      );
+      if (!hukutUrl) searches.push(
+        searchHukutProducts(query).catch(err => {
+          console.error("Hukut Search err:", err.message);
+          return [];
+        })
+      );
+
+      const results = await Promise.all(searches);
+      results.forEach(r => { if (r.length) products.push(...r); });
+    }
+
+    console.log("SCRAPED & MATCHED PRODUCTS:", products);
+    res.json({ products });
+
+  } catch (error) {
+    console.error("BACKEND ERROR:", error);
+    res.status(500).json({ error: error.message });
   }
 });
-
-//////////////////////////////////////////////////////
-// 🛒 ITTI SCRAPER (example)
-//////////////////////////////////////////////////////
-
-app.get("/api/itti", async (req, res) => {
-  try {
-    const { data } = await axios.get("https://itti.com.np/laptops");
-
-    const $ = cheerio.load(data);
-
-    const products = [];
-
-    $(".product-title").each((i, el) => {
-      products.push({
-        title: $(el).text(),
-        price: 0,
-        source: "ITTI"
-      });
-    });
-
-    res.json(products.slice(0, 10));
-  } catch {
-    res.json([]);
-  }
-});
-
-//////////////////////////////////////////////////////
-
 app.listen(3000, () => {
-  console.log("🚀 Specz API running on http://localhost:3000");
+  console.log("Specz API running on port 3000");
 });
