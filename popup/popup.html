@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Specz</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      width: 360px;
+      font-family: system-ui, sans-serif;
+      font-size: 14px;
+      color: #1a1a1a;
+      background: #fff;
+    }
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px;
+      border-bottom: 1px solid #e5e5e5;
+    }
+    header h1 { font-size: 16px; font-weight: 700; }
+    nav {
+      display: flex;
+      gap: 4px;
+      padding: 8px 14px;
+      border-bottom: 1px solid #e5e5e5;
+    }
+    nav button {
+      flex: 1;
+      padding: 6px 0;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      background: #f9f9f9;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    nav button.active {
+      background: #2563eb;
+      color: #fff;
+      border-color: #2563eb;
+    }
+    main { padding: 14px; min-height: 180px; }
+    .hidden { display: none; }
+    #loading {
+      text-align: center;
+      padding: 40px 0;
+      color: #666;
+    }
+    .error { color: #dc2626; font-size: 13px; }
+    .text-green { color: #16a34a; font-weight: 600; }
+    .text-blue { color: #2563eb; font-weight: 600; margin-bottom: 6px; }
+    .text-purple { color: #7c3aed; font-weight: 600; margin-bottom: 6px; }
+    hr { border: none; border-top: 1px solid #e5e5e5; margin: 10px 0; }
+    pre {
+      white-space: pre-wrap;
+      font-family: inherit;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    #analyzeBtn {
+      padding: 6px 12px;
+      background: #2563eb;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    #analyzeBtn:disabled { opacity: 0.5; cursor: not-allowed; }
+    #saveBtn {
+      margin-top: 10px;
+      padding: 6px 12px;
+      background: #f3f4f6;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .match-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 4px 0;
+      font-size: 13px;
+    }
+    .match-source { color: #666; font-size: 11px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Specz</h1>
+    <button id="analyzeBtn">Analyze</button>
+  </header>
+
+  <nav>
+    <button id="tabCompare" class="active" data-tab="compare">Compare</button>
+    <button id="tabAI" data-tab="ai">AI Review</button>
+    <button id="tabSaved" data-tab="saved">Saved</button>
+  </nav>
+
+  <main>
+    <div id="loading">Analyzing product…</div>
+    <div id="error" class="hidden error"></div>
+    <div id="compare" class="hidden"></div>
+    <div id="ai" class="hidden"></div>
+    <div id="saved" class="hidden"></div>
+  </main>
+
+  <script src="popup.js"></script>
+</body>
+</html>
